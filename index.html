@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <label for="device-type">Device:</label>
+    <select name="device-type" id="device-type">
+        <option value="emulator">Android</option>
+        <option value="simulator">IPhone</option>
+    </select><br /></br>
+
+
+    <label for="ios-os-version" id="ios-os-version-label" style="display: none;">OS Version:</label>
+    <select name="ios-os-version" id="ios-os-version" style="display: none;"></select>
+
+    <label for="android-os-version" id="android-os-version-label">OS Version:</label>
+    <select name="android-os-version" id="android-os-version"></select>
+
+    <br /><br />
+
+    <label for="ios-devices" id="ios-devices-label" style="display: none;">Device:</label>
+    <select name="ios-devices" id="ios-devices" style="display: none;"> </select>
+
+    <label for="android-devices" id="android-devices-label">Device:</label>
+    <select name="android-devices" id="android-devices"></select>
+
+    <br /><br />
+
+    App URL: <input id="appurl" /><br /><br />
+
+    <button id="startTest">Start Test</button>
+    <button id="stopTest">Stop Test</button><br /> <br />
+    <button id="screenshot">Screenshot</button><br /><br />
+    <iframe id="TestIframe" style="height: 700px; width: 438px; display: none;"> </iframe>
+    <script>
+        let sessionToken = null;
+        let deviceTypeSelect = document.getElementById("device-type");
+        let androidDevicesLabel = document.getElementById("android-devices-label");
+        let androidDevicesSelect = document.getElementById("android-devices");
+        let androidOsSelect = document.getElementById("android-os-version");
+        let androidOsLabel = document.getElementById("android-os-version-label");
+        let iosDevicesLabel = document.getElementById("ios-devices-label");
+        let iosDevicesSelect = document.getElementById("ios-devices");
+        let iosOsSelect = document.getElementById("ios-os-version");
+        let iosOsLabel = document.getElementById("ios-os-version-label");
+        let activeDeviceConfig = null;
+
+        let androidDeviceList = {}
+        let iosDeviceList = {}
+
+        window.onload = () => {
+            const requestOptions = {
+                method: 'GET',
+                redirect: 'follow',
+                mode: 'cors',
+            };
+
+            fetch("http://localhost:4000/getToken", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    sessionToken = result.token;
+
+                    getDeviceList("emulator", sessionToken).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                            return
+                        }
+                        return response.json();
+                    }).then(jsonData => {
+                        androidDeviceList = jsonData.data
+                        console.log(androidDeviceList)
+                        updateOsVersionList()
+                        updateDeviceList("13.0")
+                    }).catch(err => {
+                        console.log(err)
+                    })
+
+                    getDeviceList("simulator", sessionToken).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                            return
+                        }
+                        return response.json();
+                    }).then(jsonData => {
+                        iosDeviceList = jsonData.data
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                })
+                .catch(error => console.log('error', error));
+        }
+
+        function updateOsVersionList(deviceType) {
+            let osVersionSelect = androidOsSelect
+            let deviceList = androidDeviceList
+            if (deviceType == "simulator") {
+                osVersionSelect = iosOsSelect
+                deviceList = iosDeviceList
+            }
+
+            while (osVersionSelect.firstChild) {
+                osVersionSelect.removeChild(osVersionSelect.firstChild);
+            }
+
+            Object.keys(deviceList).forEach(function (key) {
+                const option = document.createElement("option");
+                option.value = key;
+                option.text = key;
+                osVersionSelect.appendChild(option);
+            });
+        }
+
+
+        function updateDeviceList(osVersion, deviceType) {
+            let deviceSelect = androidDevicesSelect
+            let deviceList = androidDeviceList
+            if (deviceType == "simulator") {
+                deviceSelect = iosDevicesSelect
+                deviceList = iosDeviceList
+            }
+
+            while (deviceSelect.firstChild) {
+                deviceSelect.removeChild(deviceSelect.firstChild);
+            }
+
+            for (const device of deviceList[osVersion]) {
+                const option = document.createElement("option");
+                option.value = device.deviceName;
+                option.text = device.deviceName;
+                deviceSelect.appendChild(option);
+            }
+
+            activeDeviceConfig = deviceList[osVersion][0]
+        }
+
+
+        deviceTypeSelect.addEventListener("change", function () {
+            if (deviceTypeSelect.value === "emulator") {
+                updateOsVersionList()
+                updateDeviceList("13.0")
+                androidDevicesLabel.style.display = "inline-block";
+                androidDevicesSelect.style.display = "inline-block";
+                androidOsSelect.style.display = "inline-block";
+                androidOsLabel.style.display = "inline-block";
+
+                iosDevicesLabel.style.display = "none";
+                iosDevicesSelect.style.display = "none";
+                iosOsLabel.style.display = "none";
+                iosOsSelect.style.display = "none";
+            } else if (deviceTypeSelect.value === "simulator") {
+                updateOsVersionList("simulator")
+                updateDeviceList("16.2", "simulator")
+                androidDevicesLabel.style.display = "none";
+                androidDevicesSelect.style.display = "none";
+                androidOsSelect.style.display = "none";
+                androidOsLabel.style.display = "none";
+
+                iosDevicesLabel.style.display = "inline-block";
+                iosDevicesSelect.style.display = "inline-block";
+                iosOsLabel.style.display = "inline-block";
+                iosOsSelect.style.display = "inline-block";
+            }
+        });
+
+        androidOsSelect.addEventListener("change", function () {
+            updateDeviceList(androidOsSelect.value)
+        })
+
+        iosOsSelect.addEventListener("change", function () {
+            updateDeviceList(iosOsSelect.value, "simulator")
+        })
+
+        androidDevicesSelect.addEventListener("change", function () {
+            for (let i = 0; i < androidDeviceList[androidOsSelect.value].length; i++) {
+                if (androidDeviceList[androidOsSelect.value][i].deviceName == androidDevicesSelect.value) {
+                    activeDeviceConfig = androidDeviceList[androidOsSelect.value][i]
+                    break
+                }
+            }
+
+            if (activeDeviceConfig) {
+                let adjustedDeviceRatio = activeDeviceConfig.deviceHeight / activeDeviceConfig.deviceWidth
+                document.getElementById("TestIframe").style.height = 600 + "px"
+                document.getElementById("TestIframe").style.width = ((600 / adjustedDeviceRatio) + 10) + "px"
+            }
+        })
+
+        iosDevicesSelect.addEventListener("change", function () {
+            for (let i = 0; i < iosDeviceList[iosOsSelect.value].length; i++) {
+                if (iosDeviceList[iosOsSelect.value][i].deviceName == iosDevicesSelect.value) {
+                    activeDeviceConfig = iosDeviceList[iosOsSelect.value][i]
+                    break
+                }
+            }
+
+            if (activeDeviceConfig) {
+                let adjustedDeviceRatio = activeDeviceConfig.deviceHeight / activeDeviceConfig.deviceWidth
+                document.getElementById("TestIframe").style.height = 600 + "px"
+                document.getElementById("TestIframe").style.width = ((600 / adjustedDeviceRatio) + 10) + "px"
+            }
+        })
+
+
+        const startTestButton = document.getElementById("startTest")
+        const stopTestButton = document.getElementById("stopTest")
+        const screenshotButton = document.getElementById("screenshot")
+        let deviceName;
+        let osVersion;
+
+        screenshotButton.addEventListener("click", () => {
+            document.getElementById("TestIframe").contentWindow.postMessage({
+                action: "screenshot"
+            }, "*")
+        })
+
+        stopTestButton.addEventListener("click", () => {
+            stopTest(sessionToken).then(res => {
+                document.getElementById("TestIframe").src = "";
+                document.getElementById("TestIframe").style.display = "none";
+                alert("Test stopped successfully.")
+            }).catch(err => {
+                console.error(err)
+                alert("Failed to stop test.")
+            })
+        })
+
+        startTestButton.addEventListener("click", () => {
+            let deviceType = deviceTypeSelect.value;
+            if (deviceType === "emulator") {
+                deviceName = androidDevicesSelect.value;
+                osVersion = androidOsSelect.value;
+            } else if (deviceType === "simulator") {
+                deviceName = iosDevicesSelect.value;
+                osVersion = iosOsSelect.value;
+            }
+
+            const appUrl = document.getElementById("appurl").value
+            console.log(appUrl)
+            document.getElementById("TestIframe").src = "https://embed.lambdatest.com?sessionToken=" + sessionToken + "&device=" + deviceName + "&osVersion=" + osVersion + "&deviceType=" + deviceType + "&appUrl=" + appUrl + "&appLaunchParams="+encodeURIComponent(JSON.stringify({"AmsClientID":"10343091","AmsClientSecret":"oH9z2ABNU8CBYieHjk1LhR5T3ugH1wuZpGveDzok","AMSEnvironment":"live"}));
+            document.getElementById("TestIframe").style.display = "block";
+
+            setTimeout(()=>{
+                console.log("sending message")
+                document.getElementById("TestIframe").contentWindow.postMessage({ method: 'methodName', data: 'exampleData' }, '*');
+            }, 20000)
+        })
+
+        async function getDeviceList(deviceType, sessionToken) {
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": "Bearer " + sessionToken,
+                },
+                redirect: 'follow'
+            };
+
+            return fetch("https://manual-api.lambdatest.com/ltms/device/list?deviceType=" + deviceType, requestOptions)
+        }
+
+        async function stopTest(sessionToken) {
+            return fetch("https://manual-api.lambdatest.com/tests/stop", {
+                "headers": {
+                    "authorization": "Bearer " + sessionToken,
+                    "content-type": "application/json"
+                },
+                "body": "{}",
+                "method": "PUT",
+                "redirect": 'follow'
+            });
+        }
+    </script>
+</body>
+
+</html>
