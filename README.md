@@ -274,7 +274,8 @@ curl --location --request PUT 'https://manual-api.lambdatest.com/tests/stop' \
 
 ## IDLE TIMEOUT
 
-Run below command to update IDLE TIMEOUT.
+Run below command to update IDLE TIMEOUT. 
+NOTE : Preference value can't be greater than 60 minutes
 ```bash
 curl --location --request PUT 'https://manual-api.lambdatest.com/ltms/users/preferences/realtime' \
 --header 'authorization: Bearer <TEST_SESSION_TOKEN>' \
