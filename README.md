@@ -3,7 +3,7 @@
 ## Start backend server
 Get the username and api key from [Accounts Page](https://accounts.lambdatest.com/security) and update username and apiKey variables in index.js file. Start the backend server using below command.
 ```bash
-npm run start
+node index.js
 ```
 
 Now backend is up and running on port 4000.
@@ -12,10 +12,10 @@ Now backend is up and running on port 4000.
 ## Start frontend
 ```bash 
 npm i -g serve
-serve . -p 3000
+serve . -p 4000
 ```
 
-Now backend is up and running on port 3000. Open http://localhost:3000 port to start testing.
+Now backend is up and running on port 4000. Open http://localhost.lambdatest.com:4000 port to start testing.
 
 # Device SDK Integration
 
@@ -270,4 +270,18 @@ Run below command to start video recording.
 curl --location --request PUT 'https://manual-api.lambdatest.com/tests/stop' \
 --header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
 --data '{}'
+```
+
+## IDLE TIMEOUT
+
+Run below command to update IDLE TIMEOUT. 
+NOTE : Preference value can't be greater than 60 minutes
+```bash
+curl --location --request PUT 'https://manual-api.lambdatest.com/ltms/users/preferences/realtime' \
+--header 'authorization: Bearer <TEST_SESSION_TOKEN>' \
+--header 'content-type: application/json' \
+--data '{
+    "preference_key": "IDLE_TIMEOUT",
+    "preference_value": 30
+}'
 ```
