@@ -201,11 +201,22 @@ curl --location 'https://manual-api.lambdatest.com/keyboard' \
 
 Run the below command to update keyboard input. 
 
+#### EMULATOR
 ```bash
 curl --location --request PUT 'https://manual-api.lambdatest.com/api-gateway/v1.0/api/language?type=data' \
 --header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
+--header 'Content-Type: application/json' \
 --data '{
-    "language": "Swedish"
+    "language": "Russian"
+}'
+```
+#### SIMULATOR
+```bash
+curl --location --request PUT 'https://manual-api.lambdatest.com/api-gateway/v1.0/api/language?type=changeLang' \
+--header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "language": "Russian"
 }'
 ```
 
