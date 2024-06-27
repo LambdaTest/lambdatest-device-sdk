@@ -150,6 +150,7 @@ Run the below command to update location.
 ```bash
 curl --location --request PUT 'https://manual-api.lambdatest.com/tests/proxy' \
 --header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
+--header 'Content-Type: application/json' \
 --data '{
     "country_code": "IL",
     "proxy_type": "GE",
