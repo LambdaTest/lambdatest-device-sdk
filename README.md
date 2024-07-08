@@ -19,7 +19,9 @@ Now backend is up and running on port 4000. Open http://localhost.lambdatest.com
 
 # Device SDK Integration
 
-Postman api collection - https://api.postman.com/collections/22615474-7f11e9d6-42c2-4712-9027-b70d2803466a?access_key=PMAT-01H7GGAK0R61DDC3MKCKR59T0F
+Postman api collection - 
+https://api.postman.com/collections/22615474-7f11e9d6-42c2-4712-9027-b70d2803466a?access_key=PMAT-01J29GE91P5R3YG3C2H0EG7M10
+
 ## Generate one time session token
 
 Generate a new one time session token from LambdaTest servers using **username and access key**.
@@ -284,7 +286,7 @@ curl --location --request PUT 'https://manual-api.lambdatest.com/tests/stop' \
 --data '{}'
 ```
 
-## IDLE TIMEOUT
+## Idle Timeout
 
 Run below command to update IDLE TIMEOUT. 
 NOTE : Preference value can't be greater than 60 minutes
