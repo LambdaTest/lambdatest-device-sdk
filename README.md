@@ -20,7 +20,7 @@ Now backend is up and running on port 4000. Open http://localhost.lambdatest.com
 # Device SDK Integration
 
 Postman api collection - 
-https://api.postman.com/collections/22615474-7f11e9d6-42c2-4712-9027-b70d2803466a?access_key=PMAT-01J29GE91P5R3YG3C2H0EG7M10
+https://api.postman.com/collections/22615474-ede71faf-4483-42aa-b0d9-2e1e59881132?access_key=PMAT-01J55Q18Y5W835CMH13TN0GE12
 
 ## Generate one time session token
 
