@@ -1,71 +1,77 @@
-# Instructions
+# Run Device SDK Tests on TestMu AI (Formerly LambdaTest)
 
-## Start backend server
-Get the username and api key from [Accounts Page](https://accounts.lambdatest.com/security) and update username and apiKey variables in index.js file. Start the backend server using below command.
+<p align="center">
+  <a href="https://www.testmuai.com/"><img src="https://img.shields.io/badge/MADE%20BY%20TestMu%20AI-000000.svg?style=for-the-badge&labelColor=000" alt="Made by TestMu AI"></a>
+  <a href="https://www.testmuai.com/real-device-testing"><img src="https://img.shields.io/badge/Real%20Device-SDK-blue.svg?style=for-the-badge&labelColor=000000" alt="Real Device SDK"></a>
+  <a href="https://community.testmuai.com/"><img src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&labelColor=000000" alt="Community"></a>
+</p>
+
+## Getting Started
+
+[TestMu AI](https://www.testmuai.com/) (Formerly LambdaTest) is the world's first full-stack AI Agentic Quality Engineering platform that empowers teams to test intelligently, smarter, and ship faster. Built for scale, it offers a full-stack testing cloud with 10K+ real devices and 3,000+ browsers. With AI-native test management, MCP servers, and agent-based automation, TestMu AI supports Selenium, Appium, Playwright, and all major frameworks. 
+
+With TestMu AI (Formerly LambdaTest), you can embed real device testing directly into your applications using the Device SDK iframe integration. This sample shows how to configure the LambdaTest Device SDK to run on the TestMu AI cloud.
+
+- [Sign up on TestMu AI](https://www.testmuai.com/register/) (Formerly LambdaTest).
+- Follow the [TestMu AI Documentation](https://www.testmuai.com/support/docs/) for the full setup walkthrough.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS version recommended)
+- A TestMu AI (Formerly LambdaTest) account with username and API key from the [Accounts Page](https://accounts.lambdatest.com/security)
+- `serve` npm package for running the frontend (`npm i -g serve`)
+
+### Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/LambdaTest/lambdatest-device-sdk.git
+cd lambdatest-device-sdk
+```
+
+Get your username and API key from the [Accounts Page](https://accounts.lambdatest.com/security) and update the `username` and `apiKey` variables in `index.js`.
+
+Start the backend server:
+
 ```bash
 node index.js
 ```
 
-Now backend is up and running on port 4000.
+Start the frontend:
 
-
-## Start frontend
-```bash 
+```bash
 npm i -g serve
 serve . -p 4000
 ```
 
-Now backend is up and running on port 4000. Open http://localhost.lambdatest.com:4000 port to start testing.
+Open http://localhost.lambdatest.com:4000 to start testing.
 
-# Device SDK Integration
+### Run tests
 
-Postman api collection - 
-https://api.postman.com/collections/22615474-ede71faf-4483-42aa-b0d9-2e1e59881132?access_key=PMAT-01J55Q18Y5W835CMH13TN0GE12
-
-## Generate one time session token
-
-Generate a new one time session token from LambdaTest servers using **username and access key**.
-
-You can find the access key and username on [Accounts Page](https://accounts.lambdatest.com/security)
-
-Run the below command to generate token:
+Generate a one-time session token using your credentials:
 
 ```bash
 curl -u <USERNAME>:<ACCESS_KEY> -i -H 'Accept:application/json' https://manual-api.lambdatest.com/tests/generate-test-session-token
 ```
 
-#### API response
-```json
-{
-    "success": true,
-    "message": "Test session token generated successfully.",
-    "testSessionToken": "tst:2ff9e3ec6c753a1aaecac"
-}
-```
-
-## Iframe integration
+Use the returned `testSessionToken` to embed a device in your app via iframe:
 
 ```javascript
-<iframe src={"https://app.lambdatest.com?sessionToken=<TEST_SESSION_TOKEN>&device=<DEVICE_NAME>&osVersion=<OS_VERSION>&appUrl=" + appUrl + "&appLaunchParams="+encodeURIComponent(JSON.stringify({"AmsClientID":"","AmsClientSecret":"","AMSEnvironment":"live"}))} />
+<iframe src={"https://app.lambdatest.com?sessionToken=<TEST_SESSION_TOKEN>&device=<DEVICE_NAME>&osVersion=<OS_VERSION>&appUrl=" + appUrl} />
 ```
 
-### Query params for iframe
+Key iframe query parameters:
 
-| Key      | Type     | Value |
-|----------|----------|----------|
-| appUrl   | String   | This will donwload and launch the app on session start   |
-| device   | String   | Name of the device to be launched. for example "iPhone 14 Pro Max"   |
-| deviceType   | String   | Device type to be launched. for andoroid "emulator", for ios "simulator"   |
-| osVersion   | String   | Name of the os version to be launched. for example "16.2"   |
-| appLaunchParams   |  URL-Encoded JSON Object    | Params to be passed on app launch  |
-| sessionToken  | String   | One time session token genrated from lambdatest server for authentication  |
+| Key | Type | Description |
+|-----|------|-------------|
+| `appUrl` | String | URL or path to download and launch the app |
+| `device` | String | Device name, e.g. `"iPhone 14 Pro Max"` |
+| `deviceType` | String | `"emulator"` for Android, `"simulator"` for iOS |
+| `osVersion` | String | OS version, e.g. `"16.2"` |
+| `sessionToken` | String | One-time token from the generate-token API |
 
-
-
-## Device list
-
-Run the below command to get the device list with supported os versions.
-Send deviceType value "emulator" for android devices and "simulator" for ios devices. 
+Get the list of available devices:
 
 ```bash
 curl --location --request GET 'https://manual-api.lambdatest.com/ltms/device/list?deviceType=emulator' \
@@ -73,229 +79,61 @@ curl --location --request GET 'https://manual-api.lambdatest.com/ltms/device/lis
 --data '{}'
 ```
 
-#### API response
-```json
-{
-    "success": true,
-    "data": {
-        "13.0": [
-            {
-                "deviceName": "Google Pixel 7 Pro",
-                "deviceHeight": 3120,
-                "deviceWidth": 1440
-            },
-            {
-                "deviceName": "Google Pixel 7",
-                "deviceHeight": 2400,
-                "deviceWidth": 1080
-            },
-            {
-                "deviceName": "Google Pixel 4XL",
-                "deviceHeight": 1738,
-                "deviceWidth": 822
-            },
-            {
-                "deviceName": "Xiaomi Mi 11",
-                "deviceHeight": 1994,
-                "deviceWidth": 898
-            },
-        ]
-    },
-    ...
-}
-```
+Stop a test session:
 
-
-## Location list
-
-Run the below command to get the list of supported locations
-
-```bash
-curl --location 'https://manual-api.lambdatest.com/ltms/locations' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>
-```
-
-#### API response
-```json
-{
-    "Africa & Middle East": [
-        {
-            "code": "IL",
-            "name": "Israel",
-            "label": "Africa & Middle East",
-            "proxy_type": "GE"
-        },
-        {
-            "code": "KW",
-            "name": "Kuwait",
-            "label": "Africa & Middle East",
-            "proxy_type": "GE"
-        },
-        {
-            "code": "MA",
-            "name": "Morocco",
-            "label": "Africa & Middle East",
-            "proxy_type": "GE"
-        },
-        {
-            "code": "NG",
-            "name": "Nigeria",
-            "label": "Africa & Middle East",
-            "proxy_type": "GE"
-        },
-    ]
-}
-```
-
-Run the below command to update location. 
-
-```bash
-curl --location --request PUT 'https://manual-api.lambdatest.com/tests/proxy' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
---header 'Content-Type: application/json' \
---data '{
-    "country_code": "IL",
-    "proxy_type": "GE",
-    "name": "Israel"
-}'
-```
-
-
-## Keyboard input list
-
-Run the below command to get the list of supported keyboard input. From response use "mac_code" key's value for ios and "android_code" key's value for android keyboard input update.
-
-```bash
-curl --location 'https://manual-api.lambdatest.com/keyboard' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>'
-```
-
-#### API response
-```json
-{
-    "data": [
-        {
-            "id": 1,
-            "name": "Belgian",
-            "win_code": "fr-BE",
-            "mac_code": "Belgian",     
-            "android_code": "Belgian", 
-            "status_ind": "active"
-        },
-        {
-            "id": 2,
-            "name": "Brazilian",
-            "win_code": "pt-BR",
-            "mac_code": "Brazilian",
-            "android_code": "Brazilian",
-            "status_ind": "active"
-        },
-        {
-            "id": 3,
-            "name": "British",
-            "win_code": "en-GB",
-            "mac_code": "British",
-            "android_code": null,
-            "status_ind": "active"
-        },
-    ]
-}
-```
-
-Run the below command to update keyboard input. 
-
-#### ANDROID
-```bash
-curl --location --request PUT 'https://manual-api.lambdatest.com/api-gateway/v1.0/api/language?type=data' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
---header 'Content-Type: application/json' \
---data '{
-    "language": "Russian"
-}'
-```
-#### IOS
-```bash
-curl --location --request PUT 'https://manual-api.lambdatest.com/api-gateway/v1.0/api/language?type=changeLang' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
---header 'Content-Type: application/json' \
---data '{
-    "language": "Russian"
-}'
-```
-
-
-
-## Video record
-
-Run below command to start video recording. Pass name in body for generated video file.
-```bash
-curl --location 'https://manual-api.lambdatest.com/api-gateway/v1.0/api/videostream?type=start' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
---data '{
-    "name": "sample-video"
-}'
-```
-
-Run below command to stop video recording.
-
-```bash
-curl --location 'https://manual-api.lambdatest.com/api-gateway/v1.0/api/videostream?type=stop' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
---data '{}'
-```
-
-Run below command to download recorded video.
-
-```bash
-curl --location 'https://manual-api.lambdatest.com/tests/gallery' \
---header 'Authorization: Bearer <TEST_SESSION_TOKEN>'
-```
-
-Use video url from the api response to download recorded video.
-
-```json
-{
-    "screenshots": [],
-    "videos": [
-        {
-            "video_id": "VID1016061251691686917271441",
-            "video_url": "https://content.lambdatest.com/883813/2023/08/10/TES1016061251691686761012590/video/17137/video.mp4?Expires=1691859773&Key-Pair-Id=K7CTX2VJ5JHSJ&Signature=YDd2~oWXXJ8whpeP8P8iEwJU0F12f9oqocBU8Q0ykD5BHRUOjsqzQhn47dqxf53EkGnmz",
-            "start_timestamp": null,
-            "end_timestamp": null,
-            "duration": "00:00:16"
-        }
-    ]
-}
-```
-
-## Device screenshot
-
-Trigger below event on device iframe to capture device screenshot.
-```javascript
-document.getElementById("iframeId").contentWindow.postMessage({
-    action: "screenshot"
-}, "*")
-```
-
-## Stop test
-
-Run below command to start video recording.
 ```bash
 curl --location --request PUT 'https://manual-api.lambdatest.com/tests/stop' \
 --header 'Authorization: Bearer <TEST_SESSION_TOKEN>' \
 --data '{}'
 ```
 
-## Idle Timeout
+### Local testing with TestMu AI Tunnel
 
-Run below command to update IDLE TIMEOUT. 
-NOTE : Preference value can't be greater than 60 minutes
-```bash
-curl --location --request PUT 'https://manual-api.lambdatest.com/ltms/users/preferences/realtime' \
---header 'authorization: Bearer <TEST_SESSION_TOKEN>' \
---header 'content-type: application/json' \
---data '{
-    "preference_key": "IDLE_TIMEOUT",
-    "preference_value": 30
-}'
-```
+To test locally hosted apps, set up the TestMu AI tunnel. OS-specific guides:
+
+- [Local Testing on Windows](https://www.testmuai.com/support/docs/local-testing-for-windows/)
+- [Local Testing on macOS](https://www.testmuai.com/support/docs/local-testing-for-macos/)
+- [Local Testing on Linux](https://www.testmuai.com/support/docs/local-testing-for-linux/)
+
+## Contributions
+
+Contributions are welcome. Open an issue to discuss your idea before submitting a pull request. When reporting bugs, include your Node.js version, OS, and Angular CLI version.
+
+## TestMu AI (Formerly LambdaTest) Community
+
+Connect with testers and developers in the [TestMu AI Community](https://community.testmuai.com/). Ask questions, share what you are building, and discuss best practices in test automation and DevOps.
+  
+## TestMu AI (Formerly LambdaTest) Certifications
+
+Earn free [TestMu AI Certifications](https://www.testmuai.com/certifications/) for testers, developers, and QA engineers. Validate your skills in Selenium, Cypress, Playwright, Appium, Espresso and more. Industry-recognized, shareable on LinkedIn, and built by practitioners, not marketers.
+
+## Learning Resources by TestMu AI (Formerly LambdaTest)
+
+Learn modern testing through tutorials, guides, videos, and weekly updates:
+
+* [TestMu AI Blog](https://www.testmuai.com/blog/)
+* [TestMu AI Learning Hub](https://www.testmuai.com/learning-hub/)
+* [TestMu AI on YouTube](https://www.youtube.com/@TestMuAI)
+* [TestMu AI Newsletter](https://www.testmuai.com/newsletter/)
+  
+## LambdaTest is Now TestMu AI
+
+On **January 12, 2026**, [LambdaTest evolved to TestMu AI](https://www.testmuai.com/lambdatest-is-now-testmuai/), the world's first fully autonomous **Agentic AI Quality Engineering Platform**.
+
+Same team. Same infrastructure. Same customer accounts. All existing LambdaTest logins, scripts, capabilities, and integrations continue to work without change.
+
+ð Find the new home for [LambdaTest](https://www.testmuai.com).
+
+### How LambdaTest Evolved into TestMu AI
+
+In 2017, we launched LambdaTest with a simple mission: make testing fast, reliable, and accessible. As LambdaTest grew, we expanded into Test Intelligence, Visual Regression Testing, Accessibility Testing, API Testing, and Performance Testing, covering the full depth of the testing lifecycle.
+
+As software development entered the AI era, testing had to evolve, too. We rebuilt the architecture to be AI-native from the ground up, with autonomous agents that **plan, author, execute, analyze, and optimize tests** while keeping humans in the loop. The platform integrates with your repos, CI, IDEs, and terminals, continuously learning from every code change and development signal.
+
+That evolution earned a new name: **TestMu AI**, built for an AI-first future of quality engineering. TestMu is not a new name for us. It is the name of our annual community conference, which has brought together 100,000+ quality engineers to discuss how AI would reshape testing, long before that became an industry norm. 
+
+What started as a high-performance cloud testing platform has transformed into an AI-native, multi-agent system powering a connected, end-to-end quality layer. That evolution defined a new identity: LambdaTest evolved into TestMu AI, built for an AI-first future of quality engineering.
+
+## Support
+
+Got a question? Email [support@testmuai.com](mailto:support@testmuai.com) or chat with us 24x7 from our chat portal.
