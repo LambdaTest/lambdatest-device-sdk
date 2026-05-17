@@ -44,7 +44,7 @@ npm i -g serve
 serve . -p 4000
 ```
 
-Open http://localhost.lambdatest.com:4000 to start testing.
+Open `http://localhost:4000` in your browser to start testing.
 
 ### Run tests
 
