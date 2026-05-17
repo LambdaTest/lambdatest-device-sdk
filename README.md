@@ -1,4 +1,4 @@
-# Run Device SDK Tests on TestMu AI (Formerly LambdaTest)
+﻿# Run Mobile Tests with LambdaTest Device SDK on TestMu AI (Formerly LambdaTest)
 
 <p align="center">
   <a href="https://www.testmuai.com/"><img src="https://img.shields.io/badge/MADE%20BY%20TestMu%20AI-000000.svg?style=for-the-badge&labelColor=000" alt="Made by TestMu AI"></a>
@@ -17,8 +17,8 @@ With TestMu AI (Formerly LambdaTest), you can embed real device testing directly
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (LTS version recommended)
-- A TestMu AI (Formerly LambdaTest) account with username and API key from the [Accounts Page](https://accounts.lambdatest.com/security)
+- Node.js (LTS version recommended)
+- A TestMu AI (Formerly LambdaTest) account with username and API key from the Accounts Page
 - `serve` npm package for running the frontend (`npm i -g serve`)
 
 ### Setup
@@ -30,7 +30,7 @@ git clone https://github.com/LambdaTest/lambdatest-device-sdk.git
 cd lambdatest-device-sdk
 ```
 
-Get your username and API key from the [Accounts Page](https://accounts.lambdatest.com/security) and update the `username` and `apiKey` variables in `index.js`.
+Get your username and API key from the Accounts Page and update the `username` and `apiKey` variables in `index.js`.
 
 Start the backend server:
 
